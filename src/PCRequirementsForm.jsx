@@ -1,8 +1,8 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { signOut } from "firebase/auth";
-import { firestoreDb, auth } from "./firebase.js"; // use the name your auth export has
+import { firestoreDb } from "./firebase";
 
 const initialForm = {
   purpose: "gaming",
@@ -19,7 +19,7 @@ const initialForm = {
 };
 
 export default function PCRequirementsForm() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [form, setForm] = useState(initialForm);
   const [submitted, setSubmitted] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -32,7 +32,7 @@ export default function PCRequirementsForm() {
 
   async function handleLogout() {
     try {
-      await signOut(auth);
+      await logout();
     } catch (err) {
       setError(err.code || err.message);
     }
@@ -65,13 +65,21 @@ export default function PCRequirementsForm() {
 
   const field = { display: "block", width: "100%", marginBottom: 14, padding: 6 };
   const label = { display: "block", marginBottom: 4, fontWeight: 500 };
+  const linkStyle = {
+    color: "#2563eb",
+    fontSize: 14,
+    fontWeight: 600,
+    textDecoration: "none",
+  };
 
   const topBar = (
     <div
       style={{
         display: "flex",
-        justifyContent: "space-between",
+        justifyContent: "flex-end",
         alignItems: "center",
+        gap: 16,
+        flexWrap: "wrap",
         padding: "12px 24px",
         background: "#ffffff",
         boxShadow: "0 1px 6px rgba(0, 0, 0, 0.08)",
@@ -155,6 +163,12 @@ export default function PCRequirementsForm() {
           >
             Submit Another Requirement
           </button>
+
+          <div style={{ marginTop: 16 }}>
+            <Link to="/" style={linkStyle}>
+              User Dashboard
+            </Link>
+          </div>
         </div>
       </>
     );
@@ -258,6 +272,13 @@ export default function PCRequirementsForm() {
         <button type="submit" disabled={saving} style={{ width: "100%", padding: 10 }}>
           {saving ? "Saving..." : "Submit requirements"}
         </button>
+
+        {/* Link below the form */}
+        <div style={{ textAlign: "center", marginTop: 20 }}>
+          <Link to="/" style={linkStyle}>
+            User Dashboard
+          </Link>
+        </div>
       </form>
     </>
   );

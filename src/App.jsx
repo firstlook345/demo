@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./AuthContext";
 import ProtectedRoute from "./ProtectedRoute";
 import Login from "./Login";
@@ -10,13 +10,12 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-
           {/* Login Page */}
           <Route path="/login" element={<Login />} />
 
-          {/* Dashboard */}
+          {/* User Dashboard */}
           <Route
-            path="/"
+            path="/userdashboard"
             element={
               <ProtectedRoute>
                 <Dashboard />
@@ -34,6 +33,8 @@ export default function App() {
             }
           />
 
+          {/* "/" and any unknown URL go to the user dashboard */}
+          <Route path="*" element={<Navigate to="/userdashboard" replace />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

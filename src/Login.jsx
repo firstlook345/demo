@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./AuthContext";
 
 export default function Login() {
-  const { login, signup, loginWithGoogle, resetPassword } = useAuth();
+  const { user, login, signup, loginWithGoogle, resetPassword } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
@@ -13,13 +13,18 @@ export default function Login() {
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
 
+  // Already signed in? Skip the login page.
+  useEffect(() => {
+    if (user) navigate("/userdashboard", { replace: true });
+  }, [user, navigate]);
+
   async function run(action) {
     setError("");
     setMessage("");
     setBusy(true);
     try {
       await action();
-      navigate("/");
+      navigate("/userdashboard");
     } catch (err) {
       setError(err.code || err.message);
     } finally {
@@ -59,7 +64,7 @@ export default function Login() {
         .auth-card {
           width: 100%;
           max-width: 400px;
-          margin: auto;            /* centers on desktop, safe on short screens */
+          margin: auto;
           padding: 36px 32px;
           text-align: left;
         }
@@ -73,15 +78,13 @@ export default function Login() {
         .auth-link:hover:not(:disabled) { text-decoration: underline; }
         .auth-primary:disabled, .auth-google:disabled { opacity: 0.6; cursor: not-allowed; }
 
-        /* Tablets */
         @media (max-width: 768px) {
           .auth-card { max-width: 440px; }
         }
-        /* Phones */
         @media (max-width: 480px) {
           .auth-page { padding: 12px; background: #ffffff; }
           .auth-card { padding: 24px 16px; box-shadow: none !important; }
-          .auth-input { font-size: 16px !important; } /* stops iOS zoom on focus */
+          .auth-input { font-size: 16px !important; }
         }
       `}</style>
 
